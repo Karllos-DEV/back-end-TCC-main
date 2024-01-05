@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const PubliRoutes = require("./routes/PubliRoutes");
 const UsersRoutes = require("./routes/UsersRoutes");
+const ComentRoutes = require("./routes/ComentRoutes");
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.get("/", (request, response) => {
 app.use("/api/dados", PubliRoutes);
 
 app.use("/api/users", UsersRoutes);
+
+app.use("/api/coment", ComentRoutes);
 
 const PORT = 3001;
 app.listen(PORT, () => {
