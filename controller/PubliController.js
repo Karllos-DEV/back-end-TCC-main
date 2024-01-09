@@ -8,44 +8,44 @@ const read = (request, response) => {
     })
 }
 
-const create = (request, response) => {
-  const { nome, descricao } = request.body
+const create = async (request, response) => {
+  const { nome, descricao } = request.body;
 
-  let foto = ''
+  let foto = '';
   if (request.file) {
-    const image = request.file
-    foto = image.filename
+    const image = request.file;
+    foto = image.filename;
   }
 
-  let errors = []
+  let errors = [];
 
   if (!nome) {
-    errors.push({ error: 'Nome não fornecido' })
+    errors.push({ error: 'Nome não fornecido' });
   }
 
   if (!descricao) {
-    errors.push({ error: 'Descrição não fornecido' })
+    errors.push({ error: 'Descrição não fornecido' });
   }
 
   if (errors.length > 0) {
-    return response.status(400).json(errors)
+    return response.status(400).json(errors);
   }
 
-  conn('tab_dados')
-    .insert({
+  try {
+    const result = await conn('tab_dados').insert({
       nome,
       descricao,
       foto,
-    })
-    .then((_) => {
-      response.json({ msg: 'Publicação realizada com sucesso!' })
-    })
-    .catch((error) => {
-      response.status(500).json({
-        error: 'Erro ao inserir a Publicação ',
-      })
-    })
-}
+    });
+
+    response.json({ msg: 'Publicação realizada com sucesso!', id: result[0] });
+  } catch (error) {
+    console.error('Erro ao inserir a Publicação:', error);
+    response.status(500).json({
+      error: 'Erro ao inserir a Publicação',
+    });
+  }
+};
 
 const update = (request, response) => {
   const { nome, descricao, foto } = request.body
